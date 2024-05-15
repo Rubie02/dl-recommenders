@@ -297,10 +297,10 @@ def dmf(df_rating, X_train, Y_train, X_test, Y_test, le_user, le_product):
 
     model = load_model(MODEL_PATH)
     result = []
+    # Get all product IDs
+    all_product_ids = df_rating['product'].unique()
     for user_id in range(0, n_users-1):
-        # Get all product IDs
-        all_product_ids = df_rating['product'].unique()
-
+        
         # Get the product IDs that the user has already rated
         rated_product_ids = df_rating[df_rating['user'] == user_id]['product'].unique()
 

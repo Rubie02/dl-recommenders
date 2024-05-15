@@ -28,7 +28,7 @@ def apply_model():
     model = data['model']
     if (model == "Neutral Collaborative Filtering"):
         model_key = "ncf"
-    elif (model == "Deep Matrix Factonzation"):
+    elif (model == "Deep Matrix Factorization"):
         model_key = "dmf"
     else:
         model_key = "cdl"
