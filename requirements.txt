@@ -1,0 +1,8 @@
+pymongo
+torch
+pandas
+sklearn
+numpy
+keras
+flask
+flask_cors
