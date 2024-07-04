@@ -175,8 +175,15 @@ def ncf(df_rating, datasets, le_user, le_product):
     RMSE = np.sqrt(MSE)
     MAE = mean_absolute_error(groud_truth, predictions)
     R2 = r2_score(groud_truth, predictions)
-    precision, recall = precision_recall_at_k(groud_truth, predictions, k=10, threshold=3.5)
-    accuracy, f1 = accuracy_f1_at_k(groud_truth, predictions, threshold=3.5)
+
+    threshold = 3.5
+    y_true = (np.array(groud_truth) >= threshold).astype(int)
+    Y_predicted = (np.array(predictions) >= threshold).astype(int)
+
+    precision = precision_score(y_true, Y_predicted)
+    recall = recall_score(y_true, Y_predicted)
+    accuracy = accuracy_score(y_true, Y_predicted)
+    f1 = f1_score(y_true, Y_predicted)
 
     data = {
         "RMSE": round(float(RMSE), 3),

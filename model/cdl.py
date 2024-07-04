@@ -1,8 +1,7 @@
 from keras.models import Model
-from keras.layers import Input, Reshape, Dot
+from keras.layers import Input
 from keras.layers import Embedding
-from keras.optimizers import Adam, RMSprop
-from keras.regularizers import l2
+from keras.optimizers import Adam
 from keras.layers import Concatenate, Dense, Dropout, Lambda, Flatten
 import numpy as np
 

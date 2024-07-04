@@ -1,11 +1,11 @@
 {
-    "Custom Deep Learning": {
-        "RMSE": 0.876,
-        "MAE": 0.722,
-        "R2": 0.556,
-        "Precision": 0.661,
-        "Recall": 0.966,
-        "Accuracy": 0.735,
-        "F1": 0.785
+    "Neutral Collaborative Filtering": {
+        "RMSE": 0.776,
+        "MAE": 0.666,
+        "R2": 0.653,
+        "Precision": 0.7,
+        "Recall": 0.0,
+        "Accuracy": 0.75,
+        "F1": 0.798
     }
 }
