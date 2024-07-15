@@ -18,20 +18,17 @@ class NeutralColabFilteringNet(nn.Module):
     def __init__(self,
                  user_count,
                  product_count,
-                 rating_count,
                  embedding_size=32,
-                 hidden_layers=(96, 64, 32, 16),
+                 hidden_layers=(64, 32, 16, 8),
                  dropout_rate=None,
                  output_range=(1, 5)):
         super().__init__()
 
         self.user_hash_size = user_count
         self.product_hash_size = product_count
-        self.rating_hash_size = rating_count
 
         self.user_embedding = nn.Embedding(self.user_hash_size, embedding_size)
         self.product_embedding = nn.Embedding(self.product_hash_size, embedding_size)
-        self.rating_embedding = nn.Embedding(self.rating_hash_size, embedding_size)
 
         self.MLP = self._gen_MLP(embedding_size, hidden_layers, dropout_rate)
         if (dropout_rate):
@@ -44,7 +41,7 @@ class NeutralColabFilteringNet(nn.Module):
         self._init_params()
 
     def _gen_MLP(self, embedding_size, hidden_layers_units, dropout_rate):
-        assert (embedding_size * 3) == hidden_layers_units[0], "First input layer number of units has to be equal to ..."
+        assert (embedding_size * 2) == hidden_layers_units[0], "First input layer number of units has to be equal to ..."
         hidden_layers = []
         input_units = hidden_layers_units[0]
 
@@ -69,17 +66,16 @@ class NeutralColabFilteringNet(nn.Module):
         self.product_embedding.weight.data.uniform_(-0.05, 0.05)
         self.MLP.apply(weights_init)
 
-    def forward(self, user_id, product_id, rating_count):
+    def forward(self, user_id, product_id):
         user_features = self.user_embedding(user_id % self.user_hash_size)
         product_features = self.product_embedding(product_id % self.product_hash_size)
-        rating_features = self.rating_embedding(rating_count % self.rating_hash_size)
-        x = torch.cat([user_features, product_features, rating_features], dim=1)
+        x = torch.cat([user_features, product_features], dim=1)
         if hasattr(self, 'dropout'):
             x = self.dropout(x)
         x = self.MLP(x)
         normalized_output = self.norm_min + self.norm_range * x
         return normalized_output
-    
+
 class DatasetBatchIterator:
     def __init__(self, X, Y, batch_size, shuffle=True):
         self.X = np.asarray(X)

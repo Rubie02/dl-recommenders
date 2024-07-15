@@ -1,1 +1,1 @@
-{"Neutral Collaborative Filtering": {"RMSE": 0.775, "MAE": 0.667, "R2": 0.655, "Precision": 0.669, "Recall": 0.984, "Accuracy": 0.748, "F1": 0.796}}
+{"Neutral Collaborative Filtering": {"RMSE": 0.789, "MAE": 0.675, "R2": 0.64, "Precision": 0.666, "Recall": 0.97, "Accuracy": 0.742, "F1": 0.79}}

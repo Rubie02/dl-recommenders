@@ -8,7 +8,7 @@ from random import randrange
 import torch
 from torch import optim
 from torch import nn
-from model.ncf import NeutralColabFilteringNet, DatasetBatchIterator, precision_recall_at_k, accuracy_f1_at_k
+from model.ncf import NeutralColabFilteringNet, DatasetBatchIterator
 from model.cdl import CustomModel, recommend_products
 import time
 import copy
@@ -70,19 +70,17 @@ def training_process(algorithm_type):
 def ncf(df_rating, datasets, le_user, le_product):
     user_count = df_rating["user"].nunique()
     product_count = df_rating["product"].nunique()
-    rating_count = df_rating["star"].count()
 
-    ncf = NeutralColabFilteringNet(user_count, product_count, rating_count)
+    ncf = NeutralColabFilteringNet(user_count, product_count)
 
     ncf.eval()
 
     ratings_row = randrange(0, df_rating.shape[0]-1)
     test_user = int(df_rating.iloc[ratings_row]["user"])
     test_product = int(df_rating.iloc[ratings_row]["product"])
-    actual_rating = int(df_rating.iloc[ratings_row]["star"])
 
     ncf.to('cpu')
-    predicted_rating = ncf(torch.tensor([test_user]), torch.tensor([test_product]), torch.tensor([actual_rating]))
+    predicted_rating = ncf(torch.tensor([test_user]), torch.tensor([test_product]))
 
     ncf._init_params()
     ncf.train()
@@ -119,15 +117,12 @@ def ncf(df_rating, datasets, le_user, le_product):
             running_loss = 0.0
             n_batches = 0
 
-            rating_value = int(df_rating['star'].unique()[0])
-
             # Maybe shuffle can be False (now is True)
             for x_batch, y_batch in DatasetBatchIterator(datasets[phase][0], datasets[phase][1], batch_size=batch_size, shuffle=False):
                 x_batch, y_batch = x_batch.to(device), y_batch.to(device)
                 optimizer.zero_grad()
                 with torch.set_grad_enabled(is_training):
-                    rating_tensor = torch.full((x_batch.size(0),), rating_value, dtype=torch.long)
-                    y_pred = ncf(x_batch[:, 0], x_batch[:, 1], rating_tensor)
+                    y_pred = ncf(x_batch[:, 0], x_batch[:, 1])
                     loss = loss_criterion(y_pred, y_batch)
                     if is_training:
                         loss.backward()
@@ -158,13 +153,11 @@ def ncf(df_rating, datasets, le_user, le_product):
     ncf.load_state_dict(min_loss_model_weights)
     ncf.eval()
     groud_truth, predictions = [], []
-    rating_value = int(df_rating['star'].unique()[0])
 
     with torch.no_grad():
         for x_batch, y_batch in DatasetBatchIterator(datasets['test'][0], datasets['test'][1], batch_size=batch_size, shuffle=False):
             x_batch, y_batch = x_batch.to(device), y_batch.to(device)
-            rating_tensor = torch.full((x_batch.size(0),), rating_value, dtype=torch.long)
-            outputs = ncf(x_batch[:, 0], x_batch[:, 1], rating_tensor)
+            outputs = ncf(x_batch[:, 0], x_batch[:, 1])
             groud_truth.extend(y_batch.tolist())
             predictions.extend(outputs.tolist())
 
@@ -210,7 +203,7 @@ def ncf(df_rating, datasets, le_user, le_product):
 
         user_tensor = torch.tensor([user_id]*len(unrated_products))
 
-        predicted_ratings = ncf(user_tensor, product_tensor, torch.tensor([0]*len(unrated_products)))
+        predicted_ratings = ncf(user_tensor, product_tensor)
 
         predicted_ratings = predicted_ratings.detach().numpy().tolist()
 

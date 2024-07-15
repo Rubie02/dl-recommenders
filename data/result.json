@@ -1,32 +1,4 @@
 {
     "isTraining": false,
-    "models": {
-        "Neutral Collaborative Filtering": {
-            "RMSE": 0.775,
-            "MAE": 0.667,
-            "R2": 0.655,
-            "Precision": 0.669,
-            "Recall": 0.984,
-            "Accuracy": 0.748,
-            "F1": 0.796
-        },
-        "Deep Matrix Factorization": {
-            "RMSE": 0.852,
-            "MAE": 0.718,
-            "R2": 0.583,
-            "Precision": 0.668,
-            "Recall": 0.825,
-            "Accuracy": 0.708,
-            "F1": 0.739
-        },
-        "Custom Deep Learning": {
-            "RMSE": 0.883,
-            "MAE": 0.732,
-            "R2": 0.551,
-            "Precision": 0.647,
-            "Recall": 0.946,
-            "Accuracy": 0.715,
-            "F1": 0.769
-        }
-    }
+    "models": {}
 }
